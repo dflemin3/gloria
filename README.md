@@ -852,9 +852,9 @@ Our data is now ready! Below, I will describe the mathematical model we use that
 
 Here I describe how we will mathematically model the games. From [Baio and Blangiardo](https://discovery.ucl.ac.uk/id/eprint/16040/1/16040.pdf), we will model the number of observed goals in the gth game for the jth team as a Poisson model:
 
-$y_{g,j} | \theta_{g,j} = \mathrm{Poisson}(\theta_{g,j})$
+$y_{g,j} | \theta_{g,j} = \mathrm{Poisson}(\theta_{g,j})$ for observed goals $y$ in the gth game for the jth team.
 
-where $\theta_{g}=(\theta_{g,h}, \theta_{g,a})$ represent "the scoring intensity" for the given team in the given game. Note, j = h indicates the home team whereas j = a indicates the away team.
+In this equation, $\theta_{g}=(\theta_{g,h}, \theta_{g,a})$ represent "the scoring intensity" for the given team in the given game. Note, j = h indicates the home team whereas j = a indicates the away team.
 
 [Baio and Blangiardo](https://discovery.ucl.ac.uk/id/eprint/16040/1/16040.pdf) and [Daniel Weitzenfeld](https://danielweitzenfeld.github.io/passtheroc/blog/2014/10/28/bayes-premier-league/) use a log-linear model for $\theta$ that is decomposed into latent, or unobserved, terms for the home ice advantage (home), a team's attacking strength (att), a team's defensive strength (def), and an intercept term (intercept) that Daniel Weitzenfeld uses to capture the the mean number of goals scored by a team. Therefore, the home team's attacking ability, $att_{h(g)}$, is pitted against the away team's defensive ability, $def_{a(g)}$ where $h(g)$ and $a(g)$ identify which teams are the home and away team in the gth game. A strong attacking team will have a large $att$, whereas a good defensive team will have a large negative $def$.
 
