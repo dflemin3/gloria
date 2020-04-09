@@ -1,22 +1,3 @@
-<style TYPE="text/css">
-code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
-</style>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    tex2jax: {
-        inlineMath: [['$','$'], ['\\(','\\)']],
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
-    }
-});
-MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i = 0; i < all.length; i += 1) {
-        all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-});
-</script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
-
 ## Hierarchical Bayesian analysis of the 2019-2020 NHL season (until it got canceled)
 
 ---
@@ -376,37 +357,37 @@ To map the names to their initials, I will make a simple mapping dictionary to a
 ```python
 # Dictionary of NHL team names and abbreviations
 conv = {'Anaheim Ducks' : 'ANA',
-        'Arizona Coyotes' : 'ARI',
-        'Boston Bruins' : 'BOS',
+        'Arizona Coyotes' : 'ARI', 
+        'Boston Bruins' : 'BOS', 
         'Buffalo Sabres' : 'BUF',
-        'Calgary Flames' : 'CGY',
-        'Carolina Hurricanes' : 'CAR',
+        'Calgary Flames' : 'CGY', 
+        'Carolina Hurricanes' : 'CAR', 
         'Chicago Blackhawks' : 'CHI',
-        'Colorado Avalanche' : 'COL',
-        'Columbus Blue Jackets' : 'CBJ',
+        'Colorado Avalanche' : 'COL', 
+        'Columbus Blue Jackets' : 'CBJ', 
         'Dallas Stars' : 'DAL',
-        'Detroit Red Wings' : 'DET',
+        'Detroit Red Wings' : 'DET', 
         'Edmonton Oilers'  : 'EDM',
         'Florida Panthers' : 'FLA',
         'Los Angeles Kings' : 'LAK',
-        'Minnesota Wild' : 'MIN',
+        'Minnesota Wild' : 'MIN', 
         'Montreal Canadiens' : 'MTL',
-        'Nashville Predators' : 'NSH',
+        'Nashville Predators' : 'NSH', 
         'New Jersey Devils' : 'NJD',
         'New York Islanders' : 'NYI',
-        'New York Rangers' : 'NYR',
+        'New York Rangers' : 'NYR', 
         'Ottawa Senators' : 'OTT',
         'Philadelphia Flyers' : 'PHI',
-        'Pittsburgh Penguins' : 'PIT',
-        'San Jose Sharks' : 'SJS',
+        'Pittsburgh Penguins' : 'PIT', 
+        'San Jose Sharks' : 'SJS', 
         'St. Louis Blues' : 'STL',
-        'Tampa Bay Lightning' : 'TBL',
+        'Tampa Bay Lightning' : 'TBL', 
         'Toronto Maple Leafs' : 'TOR',
         'Vancouver Canucks' : 'VAN',
         'Vegas Golden Knights' : 'VGK',
         'Washington Capitals' : 'WSH',
         'Winnipeg Jets' : 'WPG'}
-
+    
 # Map the names
 df["awayTeam"] = df["awayTeam"].map(conv)
 df["homeTeam"] = df["homeTeam"].map(conv)
@@ -783,7 +764,7 @@ df.head()
 
 
 
-Our season data is looking pretty good.
+Our season data is looking pretty good. 
 
 For the model criticism and examination we'll perform later, I first want to compute things like points percentage (what fraction of points did a team earn in all their games), games played, goals for per game, and goals against per game. I expect these quantities to obviously correlate with defense and attack strengths. Note that for games that end in a SO, I follow the NHL convention and count it as a goal scored by the winning team.
 
@@ -794,28 +775,28 @@ points = {'ANA' : 67,
           'ARI' : 74,
           'BOS' : 100,
           'BUF' : 68,
-          'CGY' : 79,
-          'CAR' : 81,
+          'CGY' : 79, 
+          'CAR' : 81, 
           'CHI' : 72,
-          'COL' : 92,
-          'CBJ' : 81,
+          'COL' : 92, 
+          'CBJ' : 81, 
           'DAL' : 82,
-          'DET' : 39,
+          'DET' : 39, 
           'EDM' : 83,
           'FLA' : 78,
           'LAK' : 64,
-          'MIN' : 77,
+          'MIN' : 77, 
           'MTL' : 71,
-          'NSH' : 78,
+          'NSH' : 78, 
           'NJD' : 68,
           'NYI' : 80,
-          'NYR' : 79,
+          'NYR' : 79, 
           'OTT' : 62,
           'PHI' : 89,
-          'PIT' : 86,
-          'SJS' : 63,
+          'PIT' : 86, 
+          'SJS' : 63, 
           'STL' : 94,
-          'TBL' : 92,
+          'TBL' : 92, 
           'TOR' : 81,
           'VAN' : 78,
           'VGK' : 86,
@@ -826,7 +807,7 @@ points = {'ANA' : 67,
 pointsArr = np.empty(len(teams))
 for ii, team in enumerate(teams["name"]):
     pointsArr[ii] = points[team]/(int(teams[teams.name == team]["gamesPlayed"].values) * 2)
-
+    
 # First I'll create groups for away and home teams
 awayGroup = df.groupby("awayTeam")
 homeGroup = df.groupby("homeTeam")
@@ -852,17 +833,17 @@ Our data is now ready! Below, I will describe the mathematical model we use that
 
 Here I describe how we will mathematically model the games. From [Baio and Blangiardo](https://discovery.ucl.ac.uk/id/eprint/16040/1/16040.pdf), we will model the number of observed goals in the gth game for the jth team as a Poisson model:
 
-$y_{g,j} | \theta_{g,j} = \mathrm{Poisson}(\theta_{g,j})$
+$ y_{g,j} | \theta_{g,j} = \mathrm{Poisson}(\theta_{g,j}) $
 
-where $\theta_{g}=(\theta_{g,h}, \theta_{g,a})$ represent "the scoring intensity" for the given team in the given game. Note, j = h indicates the home team whereas j = a indicates the away team.
+where $\theta_{g}=(\theta_{g,h}, \theta_{g,a})$ represent "the scoring intensity" for the given team in the given game. Note, j = h indicates the home team whereas j = a indicates the away team. 
 
-[Baio and Blangiardo](https://discovery.ucl.ac.uk/id/eprint/16040/1/16040.pdf) and [Daniel Weitzenfeld](https://danielweitzenfeld.github.io/passtheroc/blog/2014/10/28/bayes-premier-league/) use a log-linear model for $\theta$ that is decomposed into latent, or unobserved, terms for the home ice advantage (home), a team's attacking strength (att), a team's defensive strength (def), and an intercept term (intercept) that Daniel Weitzenfeld uses to capture the the mean number of goals scored by a team. Therefore, the home team's attacking ability, $att_{h(g)}$, is pitted against the away team's defensive ability, $def_{a(g)}$ where $h(g)$ and $a(g)$ identify which teams are the home and away team in the gth game. A strong attacking team will have a large $att$, whereas a good defensive team will have a large negative $def$.
+[Baio and Blangiardo](https://discovery.ucl.ac.uk/id/eprint/16040/1/16040.pdf) and [Daniel Weitzenfeld](https://danielweitzenfeld.github.io/passtheroc/blog/2014/10/28/bayes-premier-league/) use a log-linear model for $\theta$ that is decomposed into latent, or unobserved, terms for the home ice advantage (home), a team's attacking strength (att), a team's defensive strength (def), and an intercept term (intercept) that Daniel Weitzenfeld uses to capture the the mean number of goals scored by a team. Therefore, the home team's attacking ability, $att_{h(g)}$, is pitted against the away team's defensive ability, $def_{a(g)}$ where $h(g)$ and $a(g)$ identify which teams are the home and away team in the gth game. A strong attacking team will have a large $att$, whereas a good defensive team will have a large negative $def$. 
 
 Note that to maintain model identifiability, we follow [Baio and Blangiardo](https://discovery.ucl.ac.uk/id/eprint/16040/1/16040.pdf) to enforce a "sum-to-zero" constraint on both att and def. Below, I will show how to do this with pymc3. This constraint, coupled with the fact that we are using a linear model, will allow us to directly compare the team abilities we will infer.
 
 Putting this all together, our model for the home and away log scoring intensity is as follows:
 
-$\log{\theta_{h,g}} = intercept + home + att_{h(g)} + def_{a(g)}$ for the home team and
+$\log{\theta_{h,g}} = intercept + home + att_{h(g)} + def_{a(g)}$ for the home team and 
 
 $\log{\theta_{a,g}} = intercept + att_{a(g)} + def_{h(g)}$ for the away team.
 
@@ -872,14 +853,14 @@ Note how the team indicies are reversed in the two equations based on our assump
 
 ---
 
-All Bayesian models require prior and hyperprior distributions for the model parameters and hyperparameters, respectively. I adopt the priors used by both [Baio and Blangiardo](https://discovery.ucl.ac.uk/id/eprint/16040/1/16040.pdf) and [Daniel Weitzenfeld](https://danielweitzenfeld.github.io/passtheroc/blog/2014/10/28/bayes-premier-league/) and I list them below for completeness.
+All Bayesian models require prior and hyperprior distributions for the model parameters and hyperparameters, respectively. I adopt the priors used by both [Baio and Blangiardo](https://discovery.ucl.ac.uk/id/eprint/16040/1/16040.pdf) and [Daniel Weitzenfeld](https://danielweitzenfeld.github.io/passtheroc/blog/2014/10/28/bayes-premier-league/) and I list them below for completeness. 
 
 Note that Normal distributions in pymc3 are initialized with a mean, $\mu$, and a precision, $\tau$, instead of the standard mean and variance, $\sigma^2$. Therefore, a Normal distribution with a small $\tau = 0.0001$ approximates a Uniform distribution with effectively infinite bounds. Also, here I will use $t$ to index an arbitrary team.
 
 The flat priors for the home and intercept terms are given by
 
 $home \sim \mathrm{Normal}(0,0 .0001)$
-
+ 
 $intercept \sim \mathrm{Normal}(0, 0.0001)$
 
 The hyperpriors for each team's attacking and defensive strengths are
@@ -926,11 +907,11 @@ with pm.Model() as model:
     # Home, intercept priors
     home = pm.Normal('home', mu=0.0, tau=0.0001)
     intercept = pm.Normal('intercept', mu=0.0, tau=0.0001)
-
+    
     # Hyperpriors on taus
     tauAtt = pm.Gamma("tauAtt", alpha=0.1, beta=0.1)
     tauDef = pm.Gamma("tauDef", alpha=0.1, beta=0.1)
-
+    
     # Attacking, defensive strength for each team
     attsStar = pm.Normal("attsStar", mu=0.0, tau=tauAtt, shape=numTeams)
     defsStar = pm.Normal("defsStar", mu=0.0, tau=tauDef, shape=numTeams)
@@ -938,7 +919,7 @@ with pm.Model() as model:
     # Impose "sum-to-zero" constraint
     atts = pm.Deterministic('atts', attsStar - tt.mean(attsStar))
     defs = pm.Deterministic('defs', defsStar - tt.mean(defsStar))
-
+    
     # Compute theta for the home and away teams
     homeTheta = tt.exp(intercept + home + atts[homeTeam] + defs[awayTeam])
     awayTheta = tt.exp(intercept + atts[awayTeam] + defs[homeTeam])
@@ -1087,7 +1068,7 @@ varNames = ['intercept', 'home', 'tauAtt', 'tauDef']
 samples = np.empty((20000, 4))
 for ii, var in enumerate(varNames):
     samples[:,ii] = trace[var]
-
+    
 _ = corner.corner(samples, labels=varNames, lw=2, hist_kwargs={"lw" : 2}, show_titles=True)
 ```
 
@@ -1136,7 +1117,7 @@ ax.set_title("BFMI = %lf\nGelman-Rubin = %lf" % (bfmi, maxGR));
 ![png](bayesianNHL_files/bayesianNHL_40_0.png)
 
 
-It looks like our model has converged!
+It looks like our model has converged! 
 
 ### Explore model implications
 
@@ -1191,7 +1172,7 @@ fig, ax = plt.subplots(figsize=(10,4))
 inds = np.argsort(medAtts)
 
 x = np.arange(len(medAtts))
-ax.errorbar(x, medAtts[inds], yerr=[medAtts[inds] - attsCI[inds,0], attsCI[inds,1] - medAtts[inds]],
+ax.errorbar(x, medAtts[inds], yerr=[medAtts[inds] - attsCI[inds,0], attsCI[inds,1] - medAtts[inds]], 
             fmt='o')
 
 ax.axhline(0, lw=2, ls="--", color="k", zorder=0)
@@ -1215,7 +1196,7 @@ fig, ax = plt.subplots(figsize=(10,4))
 inds = np.argsort(medDefs)[::-1]
 
 x = np.arange(len(medDefs))
-ax.errorbar(x, medDefs[inds], yerr=[medDefs[inds] - defsCI[inds,0], defsCI[inds,1] - medDefs[inds]],
+ax.errorbar(x, medDefs[inds], yerr=[medDefs[inds] - defsCI[inds,0], defsCI[inds,1] - medDefs[inds]], 
             fmt='o')
 
 ax.axhline(0, lw=2, ls="--", color="k", zorder=0)
@@ -1313,7 +1294,7 @@ def simulateGame(trace, ind, homeTeam, awayTeam, teams, chain=0):
     fraction from this season's NHL results. If the game ends in either
     and OT or SO, I assign each team equal odds to win and randomly decide,
     assigning an extra goal to the winner.
-
+    
     Parameters
     ----------
     trace : iterable
@@ -1329,7 +1310,7 @@ def simulateGame(trace, ind, homeTeam, awayTeam, teams, chain=0):
         team name to a unique index
     chain : int (optional)
         Which chain to draw from. Defaults to 0.
-
+    
     Returns
     -------
     homeGoals : int
@@ -1346,7 +1327,7 @@ def simulateGame(trace, ind, homeTeam, awayTeam, teams, chain=0):
         indicates if the game finished in regulation (REG),
         overtime (OT), or a shooutout (SO).
     """
-
+    
     # Extract posterior parameters
     home = trace.point(ind, chain=chain)["home"]
     intercept = trace.point(ind)["intercept"]
@@ -1354,15 +1335,15 @@ def simulateGame(trace, ind, homeTeam, awayTeam, teams, chain=0):
     homeDef = trace.point(ind)["defs"][int(teams[teams["name"] == homeTeam]["ind"])]
     awayAtt = trace.point(ind)["atts"][int(teams[teams["name"] == awayTeam]["ind"])]
     awayDef = trace.point(ind)["defs"][int(teams[teams["name"] == awayTeam]["ind"])]
-
-    # Compute home and away goals using log-linear model, draws for model parameters
+    
+    # Compute home and away goals using log-linear model, draws for model parameters 
     # from posterior distribution. Recall - model goals as a draws from
     # conditionally-independent Poisson distribution: y | theta ~ Poisson(theta)
     homeTheta = np.exp(home + intercept + homeAtt + awayDef)
     awayTheta = np.exp(intercept + awayAtt + homeDef)
     homeGoals = np.random.poisson(homeTheta)
     awayGoals = np.random.poisson(awayTheta)
-
+    
     # Figure out who wins
     note = "REG"
     if homeGoals > awayGoals:
@@ -1378,7 +1359,7 @@ def simulateGame(trace, ind, homeTeam, awayTeam, teams, chain=0):
         # Each team gets at least 1 point now
         homePoints = 1
         awayPoints = 1
-
+        
         # Does the game go into a shootout?
         if np.random.uniform(low=0, high=1) < 0.344:
             note = "SO"
@@ -1403,7 +1384,7 @@ def simulateGame(trace, ind, homeTeam, awayTeam, teams, chain=0):
                 homeWin = False
                 awayGoals += 1
                 awayPoints = 2
-
+        
     return homeGoals, awayGoals, homeWin, homePoints, awayPoints, note  
 ```
 
@@ -1425,10 +1406,10 @@ bluesRes = np.zeros((nTrials, nGames), dtype=int)
 choices = np.arange(10000)
 
 for ii in range(nTrials):
-
+    
     # nGames game series
     for jj in range(nGames):
-
+        
         # Set home, away team
         if jj < 2:
             homeTeam = "STL"
@@ -1436,7 +1417,7 @@ for ii in range(nTrials):
         else:
             homeTeam = "CHI"
             awayTeam = "STL"
-
+    
         # Draw random sample with replacement from one of 2 MCMC chains
         ind = np.random.choice(choices)
         chain = np.random.randint(2)
@@ -1581,7 +1562,7 @@ for ii in range(numSeasons):
 
     # Save season result
     res.append(list(tmpPoints))
-
+    
 # Turn simulations into a dataframe as described above
 playedPoints = pd.DataFrame.from_records(res, columns=teams["name"].values)
 ```
@@ -1633,14 +1614,14 @@ teamNames.remove("STL")
 teamNames = list(np.sort(teamNames))
 
 for ii, ax in enumerate(axes.flatten()):
-
+    
     # Get team name
     teamName = teamNames[ii]
-
+    
     # Turn off all y ticks, set common x range
     ax.set_yticklabels([])
     ax.set_xlim(30, 120)
-
+    
     # Histogram of posterior points
     ax.hist(playedPoints[teamName], color="C0", bins="auto", histtype="step", lw=1.5, density=True)
     ax.hist(playedPoints[teamName], color="C0", bins="auto", alpha=0.6, density=True)
@@ -1654,7 +1635,7 @@ for ii, ax in enumerate(axes.flatten()):
         offset = 0.6
     else:
         offset = 0
-
+    
     ax.text(0.025 + offset, 0.925, '%d' % np.median(playedPoints[teamName]),
             horizontalalignment='left', color="k",
             verticalalignment='center', fontsize=11.5,
@@ -1678,15 +1659,15 @@ axes[4,2].set_xlabel("Points as of March 12$^{th}$", fontsize=25, position=(1, 0
 ![png](bayesianNHL_files/bayesianNHL_70_0.png)
 
 
-It appears that my model does a pretty good job at reproducing the 2019-2020 regular season! The median posterior points predicted by my model is dead on for WPG, VAN, NYR, ANA, and CAR. Moreover, it is within a few points many teams, so I think that I can conclude that my model is actually picking up on how good teams are and appropriately modeling the results of games for this season.
+It appears that my model does a pretty good job at reproducing the 2019-2020 regular season! The median posterior points predicted by my model is dead on for WPG, VAN, NYR, ANA, and CAR. Moreover, it is within a few points many teams, so I think that I can conclude that my model is actually picking up on how good teams are and appropriately modeling the results of games for this season. 
 
-It does appear, however, that my model underpredicts the points earned by the best teams, e.g. BOS, WSH, and STL. Furthermore, my model overpredicts the points earned by the worst team, DET. This effect is a consequence of the well-known effect of **shrinkage**. Shrinkage oftens occurs for hierarchical Bayesian models and both [Baio and Blangiardo](https://discovery.ucl.ac.uk/id/eprint/16040/1/16040.pdf) and [Daniel Weitzenfeld's great write-up](https://danielweitzenfeld.github.io/passtheroc/blog/2014/10/28/bayes-premier-league/) describe this effect in detail, so please see their write-ups for an in-depth discussion.
+It does appear, however, that my model underpredicts the points earned by the best teams, e.g. BOS, WSH, and STL. Furthermore, my model overpredicts the points earned by the worst team, DET. This effect is a consequence of the well-known effect of **shrinkage**. Shrinkage oftens occurs for hierarchical Bayesian models and both [Baio and Blangiardo](https://discovery.ucl.ac.uk/id/eprint/16040/1/16040.pdf) and [Daniel Weitzenfeld's great write-up](https://danielweitzenfeld.github.io/passtheroc/blog/2014/10/28/bayes-premier-league/) describe this effect in detail, so please see their write-ups for an in-depth discussion. 
 
 Basically, what's happening is that our hyperprior for attack and defense strengths has a prior mean of 0. This in effect pulls each teams strengths towards 0, depending on their observed scoring rates, effectively acting as a regularization term. [Baio and Blangiardo](https://discovery.ucl.ac.uk/id/eprint/16040/1/16040.pdf) explain how using different hyperpriors for different classes of teams, e.g. one for the good teams, one for the average teams, and one for DET, can mitigate shrinkage. Personally, I like including forms of regularization in my models to prevent observing too many extreme results, so I will keep it in.
 
 ### Simulating the unplayed games of the 2019-2020 NHL season
 
----
+--- 
 
 I am convinced that my model does a good job of reproducing the results of the 2019-2020 NHL season up until the season was suspended. Moreover, the latent parameters inferred by my model, i.e. each team's attack and defense strength, appears to provide reasonable approximations for a team's scoring and defensive performance. Given a working model, I can now use it to predict the final standings for the season to see where teams would end up in the playoffs! To do that, I will simulate the rest of the season, similar to my simulations above, and add those results to the observed points each team had accrued so far. Then, for simplicity, I will sort teams by point percentage to determine who makes the playoffs and what seed they earned. Note that future work should more robustly track game-by-game results to figure out tie breaker scenarios. Note that my model can do that, I'm just taking a simpler approach.
 
@@ -1789,7 +1770,7 @@ for ii in range(numSeasons):
 
     # Save season result
     res.append(list(tmpPoints))
-
+    
 # Turn simulations into a dataframe as described above
 futurePoints = pd.DataFrame.from_records(res, columns=teams["name"].values)
 ```
@@ -1859,7 +1840,7 @@ It looks like BOS would have won the Presidents' Trophy. Congrats! Pretty much l
 
 ### Who Makes the Playoffs?
 
----
+--- 
 
 
 
