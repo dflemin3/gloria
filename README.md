@@ -1,5 +1,6 @@
-### A Hierarchical Bayesian model for the remainder of the suspended 2019-2020 NHL season
-=========================================================================================
+## A Hierarchical Bayesian model for the remainder of the suspended 2019-2020 NHL season
+
+---
 
 I miss hockey, so I decided to build a simple hierarchical Bayesian model for the 2019-2020 NHL season. Since this model is fully probabilistic, I will be able to assess the offensive and defensive ability of teams. Furthermore, I can draw samples from the posterior distribution to simulate entire seasons, and the post-season, to see who is the true Cup champ.
 
