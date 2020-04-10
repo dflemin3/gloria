@@ -861,7 +861,7 @@ Our data is now ready! Below, I will describe the mathematical model we use that
 
 From [Baio and Blangiardo](https://discovery.ucl.ac.uk/id/eprint/16040/1/16040.pdf), we will model the number of observed goals in the gth game for the jth team as a conditionally-independent Poisson model:
 
-$y_{g,j} | \theta_{g,j} = \mathrm{Poisson}(\theta_{g,j})$
+$y_{g,j} \| \theta_{g,j} = \mathrm{Poisson}(\theta_{g,j})$
 
 where $\theta_{g}=(\theta_{g,h}, \theta_{g,a})$ represent "the scoring intensity" for the given team in the given game. Note, j = h indicates the home team whereas j = a indicates the away team.
 
